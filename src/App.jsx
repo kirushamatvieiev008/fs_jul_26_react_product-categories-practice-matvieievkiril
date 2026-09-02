@@ -13,7 +13,7 @@ import productsFromServer from './api/products';
 //   return null;
 // });
 
-const products = () => {
+const products = sortBy => {
   const productsWithCategories = productsFromServer.map(product => {
     return {
       ...product,
@@ -23,22 +23,25 @@ const products = () => {
     };
   });
 
-  const productsWithAll = productsWithCategories.map(product => {
+  let productsWithAll = productsWithCategories.map(product => {
     return {
       ...product,
       user: usersFromServer.find(user => product.category.ownerId === user.id),
     };
   });
 
+  if (sortBy !== 'all') {
+    productsWithAll = productsWithAll.filter(el => el.user.name === sortBy);
+  }
+
   return productsWithAll;
 };
 
-console.log(products());
-
+// console.log(products());
 
 export const App = () => {
-  const [sortBy, setSortBy] = useState('');
-  const productsData = products();
+  const [sortBy, setSortBy] = useState('all');
+  const productsData = products(sortBy);
 
   return (
     <div className="section">
@@ -50,21 +53,26 @@ export const App = () => {
             <p className="panel-heading">Filters</p>
 
             <p className="panel-tabs has-text-weight-bold">
-              <a data-cy="FilterAllUsers" href="#/">
+              <a
+                onClick={() => setSortBy('all')}
+                data-cy="FilterAllUsers"
+                href="#/"
+                className={sortBy === 'all' && 'is-active'}
+              >
                 All
               </a>
 
-              <a data-cy="FilterUser" href="#/">
-                User 1
-              </a>
-
-              <a data-cy="FilterUser" href="#/" className="is-active">
-                User 2
-              </a>
-
-              <a data-cy="FilterUser" href="#/">
-                User 3
-              </a>
+              {usersFromServer.map(user => (
+                <a
+                  onClick={() => setSortBy(user.name)}
+                  data-cy="FilterUser"
+                  href="#/"
+                  // style={{color: 'red'}}
+                  className={user.name === sortBy ? 'is-active' : ''}
+                >
+                  {user.name}
+                </a>
+              ))}
             </p>
 
             <div className="panel-block">
