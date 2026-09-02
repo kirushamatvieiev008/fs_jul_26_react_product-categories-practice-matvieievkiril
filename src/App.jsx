@@ -23,7 +23,7 @@ const products = sortBy => {
     };
   });
 
-  let productsWithAll = productsWithCategories.map(product => {
+  let productsInsd = productsWithCategories.map(product => {
     return {
       ...product,
       user: usersFromServer.find(user => product.category.ownerId === user.id),
@@ -31,16 +31,17 @@ const products = sortBy => {
   });
 
   if (sortBy !== 'all') {
-    productsWithAll = productsWithAll.filter(el => el.user.name === sortBy);
+    productsInsd = productsInsd.filter(el => el.user.name.includes(sortBy));
   }
 
-  return productsWithAll;
+  return productsInsd;
 };
 
 // console.log(products());
 
 export const App = () => {
   const [sortBy, setSortBy] = useState('all');
+  const [sortByInp, setSortByInp] = useState('');
   const productsData = products(sortBy);
 
   return (
@@ -64,6 +65,7 @@ export const App = () => {
 
               {usersFromServer.map(user => (
                 <a
+                  key={user.id}
                   onClick={() => setSortBy(user.name)}
                   data-cy="FilterUser"
                   href="#/"
@@ -82,7 +84,12 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={sortByInp}
+                  onChange={event => {
+                    setSortByInp(event.target.value);
+                    setSortBy(event.target.value);
+                    // console.log(sortByInp);
+                  }}
                 />
 
                 <span className="icon is-left">
