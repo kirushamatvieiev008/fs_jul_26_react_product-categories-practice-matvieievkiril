@@ -98,11 +98,17 @@ export const App = () => {
 
                 <span className="icon is-right">
                   {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
+                  {sortByInp !== '' && (
+                    <button
+                      onClick={() => {
+                        setSortByInp('');
+                        setSortBy('all');
+                      }}
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                    />
+                  )}
                 </span>
               </p>
             </div>
